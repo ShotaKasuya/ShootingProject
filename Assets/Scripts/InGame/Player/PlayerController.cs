@@ -1,13 +1,17 @@
+using InGame.Camera;
+using InGame.Interface;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 // 参照型
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamageable
 {
     // インスタンスフィールド
+    [SerializeField] private float hp;
     [SerializeField] private float speed;
-    [SerializeField] private float minY;
-    [SerializeField] private float maxY;
+    [SerializeField] private PlayerBullet playerBullet;
+    [SerializeField] private CameraScroller cameraScroller;
 
     private Transform _modelTransform;
     private PlayerInput _playerInput;
@@ -18,6 +22,7 @@ public class PlayerController : MonoBehaviour
         _modelTransform = transform;
         _playerInput = GetComponent<PlayerInput>();
         _moveAction = _playerInput.actions["Move"];
+        _playerInput.actions["Attack"].performed += ctx => Attack();
     }
 
     private void Update()
@@ -37,24 +42,20 @@ public class PlayerController : MonoBehaviour
     private void ClampMove()
     {
         var position = _modelTransform.position;
-
-        position.y = Clamp(position.y, minY, maxY);
-
+        
+        cameraScroller.ClampPosition2InCamera(ref position);
         _modelTransform.position = position;
     }
 
-    private static float Clamp(float value, float min, float max)
+    private void Attack()
     {
-        if (value < min)
-        {
-            return min;
-        }
+        var bullet = Instantiate(playerBullet, _modelTransform.position, quaternion.identity);
+        
+        Destroy(bullet.gameObject, 5f);
+    }
 
-        if (value > max)
-        {
-            return max;
-        }
-
-        return value;
+    public void Damage(float power)
+    {
+        hp -= power;
     }
 }
