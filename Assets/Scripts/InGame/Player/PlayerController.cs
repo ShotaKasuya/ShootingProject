@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour, IDamageable
 {
     // インスタンスフィールド
-    [SerializeField] private float hp;
+    [SerializeField] private int hpMax;
     [SerializeField] private float speed;
     [SerializeField] private PlayerBullet playerBullet;
     [SerializeField] private CameraScroller cameraScroller;
@@ -16,9 +16,11 @@ public class PlayerController : MonoBehaviour, IDamageable
     private Transform _modelTransform;
     private PlayerInput _playerInput;
     private InputAction _moveAction;
+    private int _hp;
 
     private void Awake()
     {
+        _hp = hpMax;
         _modelTransform = transform;
         _playerInput = GetComponent<PlayerInput>();
         _moveAction = _playerInput.actions["Move"];
@@ -56,6 +58,6 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     public void Damage(float power)
     {
-        hp -= power;
+        _hp -= (int)power;
     }
 }
