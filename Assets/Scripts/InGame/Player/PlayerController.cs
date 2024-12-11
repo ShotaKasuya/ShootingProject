@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         _moveAction = _playerInput.actions["Move"];
         _playerInput.actions["Attack"].performed += ctx => Attack();
     }
+    //
 
     private void Update()
     {
